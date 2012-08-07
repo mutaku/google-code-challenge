@@ -14,19 +14,20 @@ def check(items, credit):
     orig = list(items)
     items.sort()
     items = items[:bisect.bisect_right(items, credit)]
-    for i in items:
-        mine = items.index(i)
-        try:
-            yours = last(items, credit - i)
-            if mine != yours:
+    if len(items) == 2:
+        return items
+    else:
+        for i in items:
+            mine = items.index(i)
+            try:
+                leaf = items[bisect.bisect_left(items, credit/2):]
+                yours = last(leaf, credit - i)
                 found = [orig.index(i) + 1, last(orig, credit - i) + 1]
                 found.sort()
                 return found
                 break
-            else:
+            except:
                 pass
-        except:
-            pass
 
 def grouper(n, iterable, fillvalue=None):
     args = [iter(iterable)] * n
