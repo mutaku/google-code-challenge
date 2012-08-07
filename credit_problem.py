@@ -3,16 +3,28 @@
 # http://code.google.com/codejam/contest/351101/dashboard#s=p0
 
 import itertools
+import bisect
 from time import time
 
+
+def last(array, num):
+    return (len(array) - 1) - array[::-1].index(num)
+
 def check(items, credit):
+    orig = list(items)
+    items.sort()
+    items = items[:bisect.bisect_right(items, credit)]
     for i in items:
         mine = items.index(i)
         try:
-            yours = (len(items) - 1) - items[::-1].index(credit - i)
+            yours = last(items, credit - i)
             if mine != yours:
-                return [mine+1, yours+1]
+                found = [orig.index(i) + 1, last(orig, credit - i) + 1]
+                found.sort()
+                return found
                 break
+            else:
+                pass
         except:
             pass
 
@@ -31,7 +43,6 @@ def generator(data):
 def run(data_file, output_file):
     data = open(data_file)
     output = open(output_file, 'w')
-    # first line in this problem is not needed
     data.next()
 
     start = time()
@@ -40,7 +51,7 @@ def run(data_file, output_file):
     complete = end - start
 
     for run, result in enumerate(results):
-        resultstring = "Case #%d: %s " % (run, " ".join([str(x) for x in result]))
+        resultstring = "Case #%d: %s \n" % (run + 1, " ".join([str(x) for x in result]))
         output.write(resultstring)
 
     data.close()
