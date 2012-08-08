@@ -7,9 +7,6 @@ import bisect
 from time import time
 
 
-def last(array, num):
-    return (len(array) - 1) - array[::-1].index(num)
-
 def check(items, credit):
     orig = list(items)
     items.sort()
