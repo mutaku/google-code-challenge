@@ -19,7 +19,7 @@ def makeintstring(s):
 def generator(data):
     results = []
     for num, v1string, v2string in grouper(3, data):
-        v1, v2 = map(lambda s: makeinstring(s), (v1string, v2string))
+        v1, v2 = map(lambda s: makeintstring(s), (v1string, v2string))
         results.append(scalar(v1, v2))
     return results
 
