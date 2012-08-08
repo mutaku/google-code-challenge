@@ -13,21 +13,14 @@ def last(array, num):
 def check(items, credit):
     orig = list(items)
     items.sort()
-    items = items[:bisect.bisect_right(items, credit)]
-    if len(items) == 2:
-        return items
-    else:
-        for i in items:
-            mine = items.index(i)
-            try:
-                leaf = items[bisect.bisect_left(items, credit/2):]
-                yours = last(leaf, credit - i)
-                found = [orig.index(i) + 1, last(orig, credit - i) + 1]
-                found.sort()
-                return found
-                break
-            except:
-                pass
+    for i in items[:bisect.bisect_right(items, credit/2)]:
+        try:
+            last_element = (len(orig) - 1) - orig[::-1].index(credit - i)
+            found = sorted([orig.index(i) + 1, last_element + 1])
+            return found
+            break
+        except:
+            pass
 
 def grouper(n, iterable, fillvalue=None):
     args = [iter(iterable)] * n
