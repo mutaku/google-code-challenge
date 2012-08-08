@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Google Code Challenge - T9 Spelling Problem
+# Google Code Challenge - Minimum Scalar Product Problem
 # http://code.google.com/codejam/contest/32016/dashboard#s=p0
 
 import itertools
