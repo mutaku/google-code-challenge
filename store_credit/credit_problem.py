@@ -10,8 +10,12 @@ from time import time
 def check(items, credit):
     orig = list(items)
     items.sort()
-    for i in items[:bisect.bisect_right(items, credit/2)]:
+    extsplice = bisect.bisect_left(items, credit)
+    intsplice = bisect.bisect_right(items, credit/2)
+    leftleaf, rightleaf = items[:intsplice], items[intsplice:extsplice]
+    for i in leftleaf:
         try:
+            (len(rightleaf) - 1) - rightleaf[::-1].index(credit - i)
             last_element = (len(orig) - 1) - orig[::-1].index(credit - i)
             found = sorted([orig.index(i) + 1, last_element + 1])
             return found
@@ -41,8 +45,8 @@ def run(data_file, output_file):
     end = time()
     complete = end - start
 
-    for run, result in enumerate(results):
-        resultstring = "Case #%d: %s \n" % (run + 1, " ".join([str(x) for x in result]))
+    for run, result in enumerate(results, start=1):
+        resultstring = "Case #%d: %s \n" % (run, " ".join([str(x) for x in result]))
         output.write(resultstring)
 
     data.close()

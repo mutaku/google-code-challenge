@@ -21,8 +21,8 @@ def run(data_file, output_file):
     end = time()
     complete = end - start
 
-    for run, result in enumerate(results):
-        resultstring = "Case #%d: %s \n" % (run + 1, " ".join(result))
+    for run, result in enumerate(results, start=1):
+        resultstring = "Case #%d: %s \n" % (run, " ".join(result))
         output.write(resultstring)
 
     data.close()
