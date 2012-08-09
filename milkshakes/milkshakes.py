@@ -16,9 +16,7 @@ def makeshakes(customers):
 
 def maketuples(string):
     values = [int(x) for x in string.split(" ")]
-    return zip(*
-            [[values[i] for i in range(x, len(values), 2)]
-                for x in range(0, 2)])
+    return [values[i:i+2] for i in range(o, len(values), 2)]
 
 def generator(data):
     results = list()
