@@ -2,27 +2,28 @@
 # Google Code Challenge - Milkshakes Problem
 # http://code.google.com/codejam/contest/32016/dashboard#s=p1
 
-import itertools
 from time import time
 
 
 def makeshakes(data):
+    # code me please!
     pass
 
-def grouper(n, iterable, fillvalue=None):
-    args = [iter(iterable)] * n
-    return itertools.izip_longest(fillvalue=fillvalue, *args)
-
 def generator(data):
-    results = []
-    # have to group based on each case since we will have M lines for M customers
-    # parse first two lines to get N shakes and M customers and then grab customer profiles by grouper(M, data)
+    results = list()
+    cases = int(data.next())
+
+    for case in cases:
+        while 1:
+            N, M = [data.next() for _ in range(2)]
+            results.append(makeshakes([data.next() for _ in range(0, int(M))]))
+            break
+
     return results
 
 def run(data_file, output_file):
     data = open(data_file)
     output = open(output_file, 'w')
-    data.next()
 
     start = time()
     results = generator(data)
