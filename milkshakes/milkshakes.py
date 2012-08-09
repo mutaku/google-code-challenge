@@ -3,11 +3,22 @@
 # http://code.google.com/codejam/contest/32016/dashboard#s=p1
 
 from time import time
+from collections import defaultdict as ddict
 
 
-def makeshakes(data):
+def makeshakes(customers):
     # code me please!
-    pass
+    choices = ddict(list)
+    map(lambda k, v: choices[k].append(v), map(lambda c: maketuples(c), customers))
+
+    # not done so... None
+    return None
+
+def maketuples(string):
+    values = [int(x) for x in string.split(" ")]
+    return zip(*
+            [[values[i] for i in range(x, len(values), 2)]
+                for x in range(0, 2)])
 
 def generator(data):
     results = list()
