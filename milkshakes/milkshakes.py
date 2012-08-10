@@ -13,7 +13,6 @@ def makeshakes(customers, numshakes, numcusts):
 
     for cust, shakelist in enumerate(customers):
         choices[cust] = sort(maketuples(shakelist))
-
     for shake in numshakes:
         unsatlist.append(list())
         prefs = list()
@@ -33,16 +32,24 @@ def makeshakes(customers, numshakes, numcusts):
         if not matching:
             unsatlist[-1] = custlist
         else:
+            satlist.append((shake, prefs[0][1]))
             map(lambda c: satisfycustomer(c, unsatlist), custlist)
 
-    # now we have to build our to make list for shakes
-    # this will be our sat list
-
-    if satlist:
-        result = " ".join([str(y) for y in sum([x for x in satlist], [])])
+    # Two ways to check feasability of making shakes
+    # first way we need to build unsatlist above and then we look at it
+    # First:
+    if checkpossibility(unsatlist):
+        return " ".join([str(y) for y in sum([x for x in satlist], [])])
     else:
-        result = "IMPOSSIBLE"
-    return result
+        return "IMPOSSIBLE"
+
+    # second way we can wipe out unsatlist and just use a satlist and check
+    # that a 'to make' tuple exists for every shake else we can't do it
+    # Second:
+    #if len(satlist) == numshakes:
+    #    return " ".join([str(y) for y in sum([x for x in satlist], [])])
+    #else:
+    #    return "IMPOSSIBLE"
 
 def satisfycustomer(cust, unsatlist):
     map(lambda l: l.remove(cust), [sub for sub in unsatlist if cust in sub])
@@ -54,7 +61,7 @@ def checkpossibility(unsatlist):
         return True
 
 def maketuples(string):
-    values = [int(x) for x in string.split(" ")]
+    values = [int(x) for x in string.split(" ")[1:]]
     return [values[i:i+2] for i in range(o, len(values), 2)]
 
 def generator(data):
@@ -63,8 +70,8 @@ def generator(data):
 
     for case in cases:
         while 1:
-            N, M = [data.next() for _ in range(2)]
-            results.append(makeshakes([data.next() for _ in range(0, int(M))],N, M))
+            N, M = [int(data.next()) for _ in range(2)]
+            results.append(makeshakes([data.next() for _ in range(0, M)], N, M))
             break
 
     return results
