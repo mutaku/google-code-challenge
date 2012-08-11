@@ -35,21 +35,23 @@ def makeshakes(customers, numshakes, numcusts):
             pass
 
         if not matching:
-            satlist.append('-')
+            satlist.append(0)
             unsatlist[-1] = prefs
         elif matching and not len(prefs):
             satlist.append(0)
         else:
             satlist.append(prefs[0][1])
-            map(lambda c: satisfycustomer(c, unsatlist), [cust[0] for cust in prefs])
+            map(lambda c: satisfycustomer(c, unsatlist, choices), [cust[0] for cust in prefs])
 
     if checkpossibility(unsatlist, satlist):
         return " ".join([str(y) for y in satlist])
     else:
+        #return str(unsatlist)
         return "IMPOSSIBLE"
 
-def satisfycustomer(cust, unsatlist):
+def satisfycustomer(cust, unsatlist, choices):
     [[shake.remove(choice) for choice in shake if choice[0] == cust] for shake in unsatlist]
+    del choices[cust]
     return True
 
 def checkpossibility(unsatlist, satlist):
@@ -87,7 +89,7 @@ def run(data_file, output_file):
     complete = end - start
 
     for run, result in enumerate(results, start=1):
-        resultstring = "Case #%d: %s \n" % (run, result)
+        resultstring = "Case #%d: %s\n" % (run, result)
         output.write(resultstring)
 
     data.close()
