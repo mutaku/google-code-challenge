@@ -6,62 +6,59 @@ from time import time
 
 
 def makeshakes(customers, numshakes, numcusts):
-    # code me please!
-    unsatlist = list()
-    satlist = list()
+    satlist = [-1 for _ in range(0, numshakes)]
     choices = dict()
+    prefs = list()
 
     for cust, shakelist in enumerate(customers):
         choices[cust+1] = sorted(maketuples(shakelist))
     for shake in range(1, numshakes+1):
-        unsatlist.append(list())
-        prefs = list()
+        prefs.append(list())
         for cust in choices.keys():
             for pref in choices[cust]:
                 if pref[0] == shake:
-                    prefs.append([cust, pref[1]])
-                    break
+                    prefs[-1].append([cust, pref[1]])
                 else:
                     pass
 
-        matching = True
-        if len(prefs):
-            for k, v in enumerate(prefs):
-                if k > 0 and v[1] != prefs[k-1][1]:
-                    matching = False
-                else:
-                    pass
-        else:
-            pass
+    cleanup(prefs, satlist)
 
-        if not matching:
-            satlist.append(0)
-            unsatlist[-1] = prefs
-        elif matching and not len(prefs):
-            satlist.append(0)
-        else:
-            satlist.append(prefs[0][1])
-            map(lambda c: satisfycustomer(c, unsatlist, choices), [cust[0] for cust in prefs])
-
-    if checkpossibility(unsatlist, satlist):
+    if all(x != -1 for x in satlist):
         return " ".join([str(y) for y in satlist])
     else:
-        #return str(unsatlist)
         return "IMPOSSIBLE"
 
-def satisfycustomer(cust, unsatlist, choices):
-    [[shake.remove(choice) for choice in shake if choice[0] == cust] for shake in unsatlist]
-    del choices[cust]
-    return True
+def cleanup(prefs, satlist):
+    while not janitor(prefs, satlist):
+        pass
+    janitor(prefs, satlist, finale=True)
 
-def checkpossibility(unsatlist, satlist):
-    if len(sorted(unsatlist, key=len, reverse=True)[0]) > 1:
-        return False
-    else:
-        for k, v in enumerate(unsatlist):
-            if len(v):
-                satlist[k] = v[0][1]
-        return True
+def janitor(prefs, satlist, finale=False):
+    changes = False
+    for k, shake in enumerate(prefs):
+        if finale:
+            if len(shake) == 1:
+                satlist[k] = shake[0][1]
+                satisfycustomer(shake[0][0], prefs)
+            if len(shake) and all(x[1] == 1 for x in shake):
+                satlist[k] = 1
+                map(lambda c: satisfycustomer(c, prefs), [c[0] for c in shake])
+
+        if not len(shake) and satlist[k] == -1:
+            satlist[k] = 0
+            changes = True
+        elif len(shake) and all(x[1] == 0 for x in shake):
+            satlist[k] = 0
+            map(lambda c: satisfycustomer(c, prefs), [c[0] for c in shake])
+            changes = True
+        else:
+            changes = True
+
+    return changes
+
+def satisfycustomer(cust, target):
+    [[shake.remove(choice) for choice in shake if choice[0] == cust] for shake in target]
+    return True
 
 def maketuples(string):
     values = [int(x) for x in string.split()[1:]]
