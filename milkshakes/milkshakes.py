@@ -12,66 +12,67 @@ def makeshakes(customers, numshakes, numcusts):
     choices = dict()
 
     for cust, shakelist in enumerate(customers):
-        choices[cust] = sort(maketuples(shakelist))
-    for shake in numshakes:
+        choices[cust+1] = sorted(maketuples(shakelist))
+    for shake in range(1, numshakes+1):
         unsatlist.append(list())
         prefs = list()
         for cust in choices.keys():
             for pref in choices[cust]:
                 if pref[0] == shake:
-                    prefs.append((cust, pref[1]))
+                    prefs.append([cust, pref[1]])
                     break
                 else:
                     pass
 
         matching = True
-        for k, v in enumerate(prefs):
-            if k > 0 and v[1] != prefs[k-1][1]:
-                matching = False
-        custlist = [x for x, y in prefs]
-        if not matching:
-            unsatlist[-1] = custlist
+        if len(prefs):
+            for k, v in enumerate(prefs):
+                if k > 0 and v[1] != prefs[k-1][1]:
+                    matching = False
+                else:
+                    pass
         else:
-            satlist.append((shake, prefs[0][1]))
-            map(lambda c: satisfycustomer(c, unsatlist), custlist)
+            pass
 
-    # Two ways to check feasability of making shakes
-    # first way we need to build unsatlist above and then we look at it
-    # First:
-    if checkpossibility(unsatlist):
-        return " ".join([str(y) for y in sum([x for x in satlist], [])])
+        if not matching:
+            satlist.append('-')
+            unsatlist[-1] = prefs
+        elif matching and not len(prefs):
+            satlist.append(0)
+        else:
+            satlist.append(prefs[0][1])
+            map(lambda c: satisfycustomer(c, unsatlist), [cust[0] for cust in prefs])
+
+    if checkpossibility(unsatlist, satlist):
+        return " ".join([str(y) for y in satlist])
     else:
         return "IMPOSSIBLE"
 
-    # second way we can wipe out unsatlist and just use a satlist and check
-    # that a 'to make' tuple exists for every shake else we can't do it
-    # Second:
-    #if len(satlist) == numshakes:
-    #    return " ".join([str(y) for y in sum([x for x in satlist], [])])
-    #else:
-    #    return "IMPOSSIBLE"
-
 def satisfycustomer(cust, unsatlist):
-    map(lambda l: l.remove(cust), [sub for sub in unsatlist if cust in sub])
+    [[shake.remove(choice) for choice in shake if choice[0] == cust] for shake in unsatlist]
+    return True
 
-def checkpossibility(unsatlist):
+def checkpossibility(unsatlist, satlist):
     if len(sorted(unsatlist, key=len, reverse=True)[0]) > 1:
         return False
     else:
+        for k, v in enumerate(unsatlist):
+            if len(v):
+                satlist[k] = v[0][1]
         return True
 
 def maketuples(string):
-    values = [int(x) for x in string.split(" ")[1:]]
-    return [values[i:i+2] for i in range(o, len(values), 2)]
+    values = [int(x) for x in string.split()[1:]]
+    return [values[i:i+2] for i in range(0, len(values), 2)]
 
 def generator(data):
     results = list()
     cases = int(data.next())
 
-    for case in cases:
+    for case in range(0, cases):
         while 1:
-            N, M = [int(data.next()) for _ in range(2)]
-            results.append(makeshakes([data.next() for _ in range(0, M)], N, M))
+            totalshakes, totalcust = [int(data.next()) for _ in range(2)]
+            results.append(makeshakes([data.next() for _ in range(0, totalcust)], totalshakes, totalcust))
             break
 
     return results
@@ -86,7 +87,7 @@ def run(data_file, output_file):
     complete = end - start
 
     for run, result in enumerate(results, start=1):
-        resultstring = "Case #%d: %s \n" % (run, " ".join(result))
+        resultstring = "Case #%d: %s \n" % (run, result)
         output.write(resultstring)
 
     data.close()
