@@ -21,28 +21,38 @@ def makeshakes(customers, numshakes, numcusts):
                 else:
                     pass
 
+    print "next"
     cleanup(prefs, satlist)
 
     if all(x != -1 for x in satlist):
+        print "possible: ",satlist
         return " ".join([str(y) for y in satlist])
     else:
+        print satlist, prefs
         return "IMPOSSIBLE"
 
 def cleanup(prefs, satlist):
-    while not janitor(prefs, satlist):
+    while janitor(prefs, satlist):
         pass
-    janitor(prefs, satlist, finale=True)
+    print prefs
+    while janitor(prefs, satlist, finale=True):
+        pass
 
 def janitor(prefs, satlist, finale=False):
     changes = False
     for k, shake in enumerate(prefs):
         if finale:
+            print k, shake
             if len(shake) == 1:
+                print k, satlist[k], shake, all(x[1] == 1 for x in shake)
                 satlist[k] = shake[0][1]
                 satisfycustomer(shake[0][0], prefs)
-            if len(shake) and all(x[1] == 1 for x in shake):
+                changes = True
+            elif len(shake) and all(x[1] == 1 for x in shake):
+                print "all 1", k, satlist[k], shake, all(x[1] == 1 for x in shake)
                 satlist[k] = 1
                 map(lambda c: satisfycustomer(c, prefs), [c[0] for c in shake])
+                changes = True
 
         if not len(shake) and satlist[k] == -1:
             satlist[k] = 0
@@ -50,8 +60,6 @@ def janitor(prefs, satlist, finale=False):
         elif len(shake) and all(x[1] == 0 for x in shake):
             satlist[k] = 0
             map(lambda c: satisfycustomer(c, prefs), [c[0] for c in shake])
-            changes = True
-        else:
             changes = True
 
     return changes
@@ -70,6 +78,7 @@ def generator(data):
 
     for case in range(0, cases):
         while 1:
+            print case+1
             totalshakes, totalcust = [int(data.next()) for _ in range(2)]
             results.append(makeshakes([data.next() for _ in range(0, totalcust)], totalshakes, totalcust))
             break
