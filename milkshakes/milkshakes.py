@@ -21,38 +21,34 @@ def makeshakes(customers, numshakes, numcusts):
                 else:
                     pass
 
-    print "next"
-    cleanup(prefs, satlist)
+    janitor(prefs, satlist)
 
     if all(x != -1 for x in satlist):
-        print "possible: ",satlist
         return " ".join([str(y) for y in satlist])
     else:
-        print satlist, prefs
         return "IMPOSSIBLE"
 
-def cleanup(prefs, satlist):
-    while janitor(prefs, satlist):
+def janitor(prefs, satlist):
+    while cleanup(prefs, satlist):
         pass
-    print prefs
-    while janitor(prefs, satlist, finale=True):
+    while cleanup(prefs, satlist, finale=True):
         pass
 
-def janitor(prefs, satlist, finale=False):
+def cleanup(prefs, satlist, finale=False):
     changes = False
     for k, shake in enumerate(prefs):
         if finale:
-            print k, shake
             if len(shake) == 1:
-                print k, satlist[k], shake, all(x[1] == 1 for x in shake)
                 satlist[k] = shake[0][1]
                 satisfycustomer(shake[0][0], prefs)
                 changes = True
             elif len(shake) and all(x[1] == 1 for x in shake):
-                print "all 1", k, satlist[k], shake, all(x[1] == 1 for x in shake)
                 satlist[k] = 1
                 map(lambda c: satisfycustomer(c, prefs), [c[0] for c in shake])
                 changes = True
+            # we need to add in here if we have (1,0)(2,1) and (1,1)(2,0) type of case
+            elif len(shake) > 1 and doesflipflop(shake, prefs, satlist):
+                map(lambda c: satisfycustomer(c, prefs), [c[0] for c in shake])
 
         if not len(shake) and satlist[k] == -1:
             satlist[k] = 0
@@ -63,6 +59,18 @@ def janitor(prefs, satlist, finale=False):
             changes = True
 
     return changes
+
+def doesflipflop(shake, prefs, satlist):
+    testcase = []
+    flipper = {0: 1, 1: 0}
+    for choice in shake:
+        testcase.append([choice[0], flipper[choice[1]]])
+    if testcase in prefs:
+        satlist[prefs.index(testcase)] = 0
+        satlist[prefs.index(shake)] = 0
+        return True
+    else:
+        return False
 
 def satisfycustomer(cust, target):
     [[shake.remove(choice) for choice in shake if choice[0] == cust] for shake in target]
@@ -78,7 +86,6 @@ def generator(data):
 
     for case in range(0, cases):
         while 1:
-            print case+1
             totalshakes, totalcust = [int(data.next()) for _ in range(2)]
             results.append(makeshakes([data.next() for _ in range(0, totalcust)], totalshakes, totalcust))
             break
