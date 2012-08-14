@@ -34,6 +34,7 @@ def run(data_file, output_file):
     # Establish input/output files
     data = open(data_file)
     output = open(output_file, 'w')
+    # Skip first line (number cases) since not important
     data.next()
 
     # Run our program and time execution (lazy way)
