@@ -17,12 +17,11 @@ def makeshakes(customers, numshakes, numcusts):
     # Find out preferences for each customer for each shake we are making
     for shake in range(1, numshakes+1):
         prefs.append(list())
-        for cust in choices.keys():
-            for pref in choices[cust]:
-                if pref[0] == shake:
-                    prefs[-1].append([cust, pref[1]])
-                else:
-                    pass
+        for pref in [choices[cust] for cust in choices.keys()]:
+            if pref[0] == shake:
+                prefs[-1].append([cust, pref[1]])
+            else:
+                pass
 
     # Run our satisfiability algorithm through our workflow handler
     # This will handle primary and secondary condition scenarios
