@@ -15,13 +15,16 @@ def makeshakes(customers, numshakes, numcusts):
     for cust, shakelist in enumerate(customers):
         choices[cust+1] = sorted(maketuples(shakelist))
     # Find out preferences for each customer for each shake we are making
+        for cust in choices.keys():
+            for pref in choices[cust]:
+                if pref[0] == shake:
+                    prefs[-1].append([cust, pref[1]])
+
     for shake in range(1, numshakes+1):
         prefs.append(list())
         for pref in [choices[cust] for cust in choices.keys()]:
             if pref[0] == shake:
                 prefs[-1].append([cust, pref[1]])
-            else:
-                pass
 
     # Run our satisfiability algorithm through our workflow handler
     # This will handle primary and secondary condition scenarios
@@ -93,8 +96,7 @@ def doesflipflop(shake, prefs, satlist):
         satlist[prefs.index(testcase)] = 0
         satlist[prefs.index(shake)] = 0
         return True
-    else:
-        return False
+    return False
 
 def satisfycustomer(cust, target):
     # Iterate of preferences list and suck out any that contain our customer
